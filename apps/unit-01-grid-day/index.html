@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="An interactive 24-hour electric-grid balancing lab for Grid Basics Unit 1."
+    />
+    <title>Grid Basics · 24-Hour Balancing Lab</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="eyebrow" href="../../docs/unit-01-electricity-fundamentals.md">
+        Grid Basics · Unit 1
+      </a>
+      <h1>Can you keep the grid balanced for 24 hours?</h1>
+      <p>
+        Adjust a simplified resource fleet while demand rises from 87 GW overnight
+        to 150 GW near the evening peak. This lab models physical balancing only—no
+        bids, prices, or market dispatch yet.
+      </p>
+    </header>
+
+    <main class="lab-layout">
+      <aside class="controls" aria-label="Simulation controls">
+        <div class="control-heading">
+          <div>
+            <p class="section-label">Scenario</p>
+            <h2>Change the system</h2>
+          </div>
+          <button id="reset-button" class="text-button" type="button">Reset</button>
+        </div>
+
+        <div class="preset-grid" aria-label="Scenario presets">
+          <button type="button" data-preset="balanced" aria-pressed="true">
+            Balanced day
+          </button>
+          <button type="button" data-preset="data-center" aria-pressed="false">
+            +12 GW campus
+          </button>
+          <button type="button" data-preset="outage" aria-pressed="false">
+            Evening outage
+          </button>
+          <button type="button" data-preset="compound" aria-pressed="false">
+            Campus + outage
+          </button>
+        </div>
+
+        <details open>
+          <summary>Generation fleet</summary>
+          <div class="control-list">
+            <label for="steady-capacity">
+              <span>Steady capacity <output id="steady-capacity-output"></output></span>
+              <input id="steady-capacity" type="range" min="30" max="100" step="1" />
+            </label>
+            <label for="flexible-capacity">
+              <span>Flexible capacity <output id="flexible-capacity-output"></output></span>
+              <input id="flexible-capacity" type="range" min="30" max="100" step="1" />
+            </label>
+            <label for="solar-capacity">
+              <span>Solar nameplate <output id="solar-capacity-output"></output></span>
+              <input id="solar-capacity" type="range" min="0" max="100" step="1" />
+            </label>
+            <label for="wind-capacity">
+              <span>Wind nameplate <output id="wind-capacity-output"></output></span>
+              <input id="wind-capacity" type="range" min="0" max="80" step="1" />
+            </label>
+          </div>
+        </details>
+
+        <details open>
+          <summary>Battery</summary>
+          <div class="control-list">
+            <label for="battery-power">
+              <span>Discharge power <output id="battery-power-output"></output></span>
+              <input id="battery-power" type="range" min="0" max="40" step="1" />
+            </label>
+            <label for="battery-duration">
+              <span>Duration <output id="battery-duration-output"></output></span>
+              <input id="battery-duration" type="range" min="1" max="12" step="1" />
+            </label>
+            <label for="battery-soc">
+              <span>Starting charge <output id="battery-soc-output"></output></span>
+              <input id="battery-soc" type="range" min="0" max="100" step="5" />
+            </label>
+          </div>
+        </details>
+
+        <details open>
+          <summary>New load and outage</summary>
+          <div class="control-list">
+            <label for="data-center-load">
+              <span>Data-center load <output id="data-center-load-output"></output></span>
+              <input id="data-center-load" type="range" min="0" max="30" step="1" />
+            </label>
+            <label for="data-center-start">
+              <span>Energization hour <output id="data-center-start-output"></output></span>
+              <input id="data-center-start" type="range" min="0" max="23" step="1" />
+            </label>
+            <label for="outage-size">
+              <span>Flexible fleet outage <output id="outage-size-output"></output></span>
+              <input id="outage-size" type="range" min="0" max="50" step="1" />
+            </label>
+            <label for="outage-start">
+              <span>Outage begins <output id="outage-start-output"></output></span>
+              <input id="outage-start" type="range" min="0" max="23" step="1" />
+            </label>
+            <label for="outage-duration">
+              <span>Outage duration <output id="outage-duration-output"></output></span>
+              <input id="outage-duration" type="range" min="1" max="12" step="1" />
+            </label>
+          </div>
+        </details>
+      </aside>
+
+      <section class="workspace" aria-live="polite">
+        <section class="summary" aria-label="Daily results">
+          <div>
+            <span>Peak load</span>
+            <strong id="peak-load">—</strong>
+          </div>
+          <div>
+            <span>Daily energy</span>
+            <strong id="daily-energy">—</strong>
+          </div>
+          <div>
+            <span>Load factor</span>
+            <strong id="load-factor">—</strong>
+          </div>
+          <div id="reliability-summary">
+            <span>Unserved energy</span>
+            <strong id="unserved-energy">—</strong>
+          </div>
+        </section>
+
+        <section class="chart-section" aria-labelledby="balance-title">
+          <div class="chart-heading">
+            <div>
+              <p class="section-label">Power through the day</p>
+              <h2 id="balance-title">Demand and supply used to serve it</h2>
+            </div>
+            <p id="system-status" class="status-message"></p>
+          </div>
+
+          <div class="legend" aria-label="Chart legend">
+            <span><i class="steady"></i>Steady</span>
+            <span><i class="solar"></i>Solar</span>
+            <span><i class="wind"></i>Wind</span>
+            <span><i class="flexible"></i>Flexible</span>
+            <span><i class="battery"></i>Battery</span>
+            <span><i class="unserved"></i>Unserved</span>
+            <span><i class="demand-line"></i>Demand</span>
+          </div>
+
+          <div class="chart-wrap">
+            <svg
+              id="balance-chart"
+              viewBox="0 0 960 420"
+              role="img"
+              aria-labelledby="balance-title balance-description"
+            ></svg>
+            <p id="balance-description" class="sr-only">
+              A 24-hour stacked bar chart of electricity supply used to serve load,
+              with a line showing demand. Select an hour for details.
+            </p>
+          </div>
+        </section>
+
+        <section class="hour-and-storage">
+          <article class="hour-detail" aria-labelledby="hour-title">
+            <div class="hour-heading">
+              <div>
+                <p class="section-label">Selected hour</p>
+                <h2 id="hour-title">—</h2>
+              </div>
+              <span id="hour-balance-status" class="balance-status"></span>
+            </div>
+            <p id="balance-equation" class="balance-equation"></p>
+            <dl id="hour-breakdown" class="breakdown"></dl>
+          </article>
+
+          <article class="storage-detail" aria-labelledby="storage-title">
+            <div>
+              <p class="section-label">Stored energy</p>
+              <h2 id="storage-title">Battery state of charge</h2>
+            </div>
+            <svg
+              id="storage-chart"
+              viewBox="0 0 440 190"
+              role="img"
+              aria-label="Battery state of charge over 24 hours"
+            ></svg>
+          </article>
+        </section>
+
+        <section class="challenges" aria-labelledby="challenges-title">
+          <p class="section-label">Try these</p>
+          <h2 id="challenges-title">Three experiments</h2>
+          <ol>
+            <li>
+              Add the 12 GW campus. Which changes more: peak load, daily energy, or
+              load factor? Explain why.
+            </li>
+            <li>
+              Trigger the evening outage, then change battery power and duration.
+              Which rating limits the battery first?
+            </li>
+            <li>
+              Run the campus + outage scenario. Find two different resource mixes
+              that eliminate unserved energy. Are the mixes physically equivalent?
+            </li>
+          </ol>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        Educational simplification: hourly resolution, stylized resource profiles,
+        no transmission constraints, and a fixed dispatch rule. Values are scenarios,
+        not historical PJM data.
+      </p>
+    </footer>
+
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>

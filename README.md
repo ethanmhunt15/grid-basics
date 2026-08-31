@@ -59,6 +59,23 @@ The units are ordered deliberately. Units 1–7 are prerequisites for understand
 
 ### Unit 1 — Electricity from first principles
 
+[Read the Unit 1 pre-reading](docs/unit-01-electricity-fundamentals.md)
+
+[Open the Unit 1 lab](apps/unit-01-grid-day/index.html) after starting a local
+server from the repository root:
+
+```bash
+python3 -m http.server 8000
+```
+
+Then visit `http://localhost:8000/apps/unit-01-grid-day/`.
+
+Run the lab's model checks with:
+
+```bash
+node --test tests/unit-01-grid-day.test.mjs
+```
+
 **Learn**
 
 - Power versus energy
