@@ -130,6 +130,17 @@ Explain why equal nameplate quantities of solar, gas, storage, and demand respon
 
 ### Unit 3 — Wholesale energy markets
 
+[Read the Unit 3 pre-reading](docs/unit-03-wholesale-energy-markets.md)
+
+[Open the Unit 3 lab](apps/unit-03-energy-market/index.html) using the local
+server, then visit `http://localhost:8000/apps/unit-03-energy-market/`.
+
+Run its model checks with:
+
+```bash
+node --test tests/unit-03-energy-market.test.mjs
+```
+
 **Learn**
 
 - Vertically integrated utilities versus organized wholesale markets

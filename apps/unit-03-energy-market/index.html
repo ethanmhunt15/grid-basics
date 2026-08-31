@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Interactive wholesale energy-market lab for Grid Basics Unit 3." />
+    <title>Grid Basics · Wholesale Energy Market Lab</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <a href="../../docs/unit-03-wholesale-energy-markets.md">Grid Basics · Unit 3</a>
+      <h1>Clear the market.<br />Then constrain the grid.</h1>
+      <p>Move from a one-node merit order to two-settlement accounting and finally to location-dependent prices.</p>
+    </header>
+
+    <main>
+      <section class="lab" id="stack">
+        <div class="intro"><p>Exercise 01</p><h2>Move demand through the supply stack</h2><span>The marginal accepted offer sets the simplified uniform price.</span></div>
+        <div class="control-line">
+          <label for="demand">Demand <output id="demand-output"></output></label>
+          <input id="demand" type="range" min="0" max="25" step="0.5" value="18" />
+        </div>
+        <div class="stack-layout">
+          <div>
+            <svg id="stack-chart" viewBox="0 0 760 400" role="img" aria-label="Merit-order supply stack and demand"></svg>
+          </div>
+          <aside class="result-panel">
+            <p>Clearing price</p><strong id="clearing-price">—</strong>
+            <p id="marginal-message"></p>
+            <dl><dt>Energy served</dt><dd id="served-energy">—</dd><dt>Hourly gross margin</dt><dd id="gross-margin">—</dd></dl>
+          </aside>
+        </div>
+        <div id="dispatch-cards" class="dispatch-cards"></div>
+      </section>
+
+      <section class="lab" id="settlement">
+        <div class="intro"><p>Exercise 02</p><h2>Settle the forecast error</h2><span>Day-ahead establishes the position; real-time prices the deviation.</span></div>
+        <div class="settlement-layout">
+          <div class="controls-grid">
+            <label for="scheduled"><span>Day-ahead schedule <output id="scheduled-output"></output></span><input id="scheduled" type="range" min="40" max="140" step="1" value="80" /></label>
+            <label for="day-ahead-price"><span>Day-ahead LMP <output id="day-ahead-price-output"></output></span><input id="day-ahead-price" type="range" min="-20" max="150" step="1" value="35" /></label>
+            <label for="actual"><span>Actual consumption <output id="actual-output"></output></span><input id="actual" type="range" min="40" max="140" step="1" value="86" /></label>
+            <label for="real-time-price"><span>Real-time LMP <output id="real-time-price-output"></output></span><input id="real-time-price" type="range" min="-20" max="250" step="1" value="70" /></label>
+          </div>
+          <div class="settlement-result">
+            <p class="formula" id="settlement-formula"></p>
+            <div class="settlement-flow">
+              <div><span>Day-ahead</span><strong id="day-ahead-settlement">—</strong></div>
+              <b>+</b><div><span>Real-time deviation</span><strong id="real-time-settlement">—</strong></div>
+              <b>=</b><div class="total"><span>Total energy settlement</span><strong id="total-settlement">—</strong></div>
+            </div>
+            <p id="effective-price"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="lab" id="locations">
+        <div class="intro"><p>Exercise 03</p><h2>Make location matter</h2><span>A limited west-to-east path can force higher-cost local generation to run.</span></div>
+        <div class="location-controls">
+          <label for="east-load"><span>East load <output id="east-load-output"></output></span><input id="east-load" type="range" min="4" max="21" step="0.5" value="16" /></label>
+          <label for="line-limit"><span>Line limit <output id="line-limit-output"></output></span><input id="line-limit" type="range" min="0" max="18" step="0.5" value="8" /></label>
+        </div>
+        <div class="grid-diagram" aria-live="polite">
+          <article><p>West</p><strong id="west-lmp">—</strong><span id="west-detail"></span></article>
+          <div class="transmission"><span id="flow-label">—</span><div><i id="flow-fill"></i></div><small id="line-status">—</small></div>
+          <article><p>East</p><strong id="east-lmp">—</strong><span id="east-detail"></span></article>
+        </div>
+        <p id="congestion-explanation" class="explanation"></p>
+        <div class="zone-dispatch"><div><h3>West dispatch</h3><div id="west-dispatch"></div></div><div><h3>East dispatch</h3><div id="east-dispatch"></div></div></div>
+        <div class="challenges"><h3>Try these</h3><ol><li>Move demand from 16 to 16.5 GW. Why can the price change without a large energy change?</li><li>Keep east load at 16 GW and expand the line. At what point do the two prices converge?</li><li>Set the line limit to zero, then raise east load until its gas turbine is marginal. What does isolation cost?</li></ol></div>
+      </section>
+    </main>
+
+    <footer>Educational simplification: stylized offers, lossless two-zone network, no startup costs, reserves, uplift, or market-power mitigation.</footer>
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>
