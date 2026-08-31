@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Interactive power-plant and grid-resource lab for Grid Basics Unit 2." />
+    <title>Grid Basics · Power Plants and Resources Lab</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <a href="../../docs/unit-02-power-plants-and-grid-resources.md">Grid Basics · Unit 2</a>
+      <h1>One MW label.<br />Very different machines.</h1>
+      <p>
+        Compare grid resources, unpack a thermal plant's operating cost, and run a
+        constrained fleet through the same hypothetical 24-hour day from Unit 1.
+      </p>
+    </header>
+
+    <main>
+      <nav class="lab-nav" aria-label="Lab sections">
+        <a href="#compare">01 · Compare</a>
+        <a href="#cost">02 · Calculate cost</a>
+        <a href="#operate">03 · Operate the fleet</a>
+      </nav>
+
+      <section id="compare" class="lab-section" aria-labelledby="compare-title">
+        <div class="section-intro">
+          <p class="kicker">Workbench 01</p>
+          <h2 id="compare-title">Compare capabilities, not just nameplates</h2>
+          <p>
+            Equal MW ratings do not imply equal output profiles, response speeds,
+            endurance, risks, or system roles.
+          </p>
+        </div>
+
+        <div class="compare-picker">
+          <label>
+            Resource A
+            <select id="resource-a"></select>
+          </label>
+          <span aria-hidden="true">versus</span>
+          <label>
+            Resource B
+            <select id="resource-b"></select>
+          </label>
+        </div>
+
+        <div id="comparison" class="comparison" aria-live="polite"></div>
+      </section>
+
+      <section id="cost" class="lab-section" aria-labelledby="cost-title">
+        <div class="section-intro">
+          <p class="kicker">Workbench 02</p>
+          <h2 id="cost-title">Build a thermal plant's short-run cost</h2>
+          <p>
+            This is an incremental production-cost exercise—not a complete project
+            cost, electricity bill, or market offer.
+          </p>
+        </div>
+
+        <div class="cost-workbench">
+          <div class="control-panel">
+            <label for="heat-rate">
+              <span>Heat rate <output id="heat-rate-output"></output></span>
+              <input id="heat-rate" type="range" min="5" max="14" step="0.1" value="7.5" />
+            </label>
+            <label for="fuel-price">
+              <span>Fuel price <output id="fuel-price-output"></output></span>
+              <input id="fuel-price" type="range" min="1" max="12" step="0.1" value="3.6" />
+            </label>
+            <label for="variable-om">
+              <span>Variable O&amp;M <output id="variable-om-output"></output></span>
+              <input id="variable-om" type="range" min="0" max="12" step="0.5" value="3" />
+            </label>
+            <label for="emissions-cost">
+              <span>Emissions and other variable costs <output id="emissions-cost-output"></output></span>
+              <input id="emissions-cost" type="range" min="0" max="30" step="0.5" value="1.5" />
+            </label>
+          </div>
+
+          <div class="cost-result" aria-live="polite">
+            <p class="result-label">Simplified short-run cost</p>
+            <strong id="total-cost">—</strong>
+            <p id="cost-equation" class="equation"></p>
+            <div id="cost-bar" class="cost-bar" aria-label="Operating cost components"></div>
+            <div id="cost-legend" class="cost-legend"></div>
+            <p class="small-note">
+              Excludes startup, no-load, fixed O&amp;M, construction, financing, and
+              transmission costs.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="operate" class="lab-section operate" aria-labelledby="operate-title">
+        <div class="section-intro">
+          <p class="kicker">Workbench 03</p>
+          <h2 id="operate-title">Operate a constrained fleet for 24 hours</h2>
+          <p>
+            The teaching rule uses renewable output, respects thermal minimums and
+            ramps, and starts the gas turbine only after its one-hour delay. It does
+            not calculate bids or market prices.
+          </p>
+        </div>
+
+        <div class="preset-row" aria-label="Operations scenarios">
+          <button type="button" data-preset="base" aria-pressed="true">Normal day</button>
+          <button type="button" data-preset="load" aria-pressed="false">+15 GW load</button>
+          <button type="button" data-preset="outage" aria-pressed="false">20 GW outage</button>
+          <button type="button" data-preset="stress" aria-pressed="false">Load + outage</button>
+        </div>
+
+        <div class="operations-layout">
+          <aside class="operations-controls" aria-label="Fleet operation controls">
+            <label for="demand-adder"><span>Additional flat load <output id="demand-adder-output"></output></span><input id="demand-adder" type="range" min="0" max="30" step="1" /></label>
+            <label for="solar-capacity"><span>Solar nameplate <output id="solar-capacity-output"></output></span><input id="solar-capacity" type="range" min="0" max="80" step="1" /></label>
+            <label for="wind-capacity"><span>Wind nameplate <output id="wind-capacity-output"></output></span><input id="wind-capacity" type="range" min="0" max="60" step="1" /></label>
+            <label for="battery-power"><span>Battery power <output id="battery-power-output"></output></span><input id="battery-power" type="range" min="0" max="35" step="1" /></label>
+            <label for="battery-duration"><span>Battery duration <output id="battery-duration-output"></output></span><input id="battery-duration" type="range" min="1" max="10" step="1" /></label>
+            <label for="peaker-commit"><span>Commit gas turbine <output id="peaker-commit-output"></output></span><input id="peaker-commit" type="range" min="0" max="23" step="1" /></label>
+            <label for="outage-size"><span>Combined-cycle outage <output id="outage-size-output"></output></span><input id="outage-size" type="range" min="0" max="40" step="1" /></label>
+            <label for="outage-start"><span>Outage begins <output id="outage-start-output"></output></span><input id="outage-start" type="range" min="0" max="23" step="1" /></label>
+            <label for="outage-duration"><span>Outage duration <output id="outage-duration-output"></output></span><input id="outage-duration" type="range" min="1" max="10" step="1" /></label>
+          </aside>
+
+          <div class="operations-workspace">
+            <div class="metrics" aria-label="Operations results">
+              <div><span>Peak load</span><strong id="peak-load">—</strong></div>
+              <div><span>Unserved energy</span><strong id="unserved-energy">—</strong></div>
+              <div><span>Renewable curtailment</span><strong id="curtailed-energy">—</strong></div>
+              <div><span>Ending battery</span><strong id="ending-battery">—</strong></div>
+            </div>
+
+            <div class="chart-heading">
+              <div>
+                <p class="kicker">Hourly operation</p>
+                <h3>Generation used to serve load</h3>
+              </div>
+              <p id="operation-status"></p>
+            </div>
+            <div class="legend" aria-label="Chart legend">
+              <span><i class="nuclear"></i>Nuclear</span><span><i class="coal"></i>Coal</span><span><i class="combined-cycle"></i>Combined cycle</span><span><i class="peaker"></i>Gas turbine</span><span><i class="solar"></i>Solar</span><span><i class="wind"></i>Wind</span><span><i class="battery"></i>Battery</span><span><i class="shortage"></i>Unserved</span><span><i class="demand"></i>Demand</span>
+            </div>
+            <div class="chart-scroll">
+              <svg id="operations-chart" viewBox="0 0 980 420" role="img" aria-label="Hourly resource operation and demand"></svg>
+            </div>
+
+            <article class="hour-detail" aria-live="polite">
+              <div>
+                <p class="kicker">Selected hour</p>
+                <h3 id="selected-hour">—</h3>
+              </div>
+              <p id="hour-message"></p>
+              <div id="unit-details" class="unit-details"></div>
+            </article>
+          </div>
+        </div>
+
+        <div class="challenges">
+          <h3>Experiments</h3>
+          <ol>
+            <li>Move the gas-turbine commitment later. Can a fast plant help before it has finished starting?</li>
+            <li>Add 15 GW of load, then remove 20 GW of combined-cycle capacity at 5 p.m. Which constraint causes the first shortage?</li>
+            <li>Eliminate the shortage with battery power alone, then with duration alone. Why are both ratings necessary?</li>
+          </ol>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Stylized educational model: hourly resolution, aggregated resource classes,
+      fixed operating rules, no transmission network, and no market clearing.
+    </footer>
+
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>

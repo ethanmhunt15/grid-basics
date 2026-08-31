@@ -98,6 +98,17 @@ Follow electricity from a generator to a wall outlet and explain the difference 
 
 ### Unit 2 — Power plants and grid resources
 
+[Read the Unit 2 pre-reading](docs/unit-02-power-plants-and-grid-resources.md)
+
+[Open the Unit 2 lab](apps/unit-02-resources/index.html) using the same local
+server as Unit 1, then visit `http://localhost:8000/apps/unit-02-resources/`.
+
+Run its model checks with:
+
+```bash
+node --test tests/unit-02-resources.test.mjs
+```
+
 **Learn**
 
 - Nameplate capacity and capacity factor
