@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Interactive PJM-style capacity auction lab for Grid Basics Unit 5." />
+    <title>Grid Basics · Capacity Auction Lab</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <a href="../../docs/unit-05-capacity-markets.md">Grid Basics · Unit 5</a>
+      <p class="eyebrow">Capacity auction laboratory</p>
+      <h1>Find the price<br />at the intersection.</h1>
+      <p class="lede">Build a capacity supply stack, shape a VRR-style demand curve, and watch one marginal block reset the price paid to every cleared MW.</p>
+    </header>
+
+    <main>
+      <section class="auction" aria-labelledby="auction-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Auction geometry</p><h2 id="auction-title">Clear the market</h2></div>
+          <p>The supply offers are fictional. The demand curve preserves the important economics of a downward-sloping VRR curve without reproducing a particular PJM delivery year's parameters.</p>
+        </div>
+
+        <div class="presets" aria-label="Auction scenarios">
+          <button type="button" data-preset="base" aria-pressed="true">Base auction</button>
+          <button type="button" data-preset="data-center">+10 GW requirement</button>
+          <button type="button" data-preset="retirement">15 GW retirement</button>
+          <button type="button" data-preset="zone">Constrained zone</button>
+        </div>
+
+        <div class="auction-layout">
+          <aside class="control-panel">
+            <section aria-labelledby="demand-controls-title">
+              <div class="control-title"><h3 id="demand-controls-title">Capacity demand</h3><span>VRR-style curve</span></div>
+              <label for="target"><span>Reliability target <output id="target-output"></output></span><input id="target" type="range" min="30" max="90" step="1" /></label>
+              <label for="net-cone"><span>Net CONE <output id="net-cone-output"></output></span><input id="net-cone" type="range" min="60" max="300" step="5" /></label>
+              <label for="curve-width"><span>Curve width <output id="curve-width-output"></output></span><input id="curve-width" type="range" min="8" max="40" step="1" /></label>
+            </section>
+
+            <section aria-labelledby="supply-controls-title">
+              <div class="control-title"><h3 id="supply-controls-title">Supply offers</h3><span>Sorted by price on chart</span></div>
+              <div class="supply-head"><span>Resource</span><span>GW</span><span>$/MW-day</span></div>
+              <div id="supply-editor"></div>
+            </section>
+          </aside>
+
+          <div class="clearing-workspace">
+            <div class="metric-strip" aria-live="polite">
+              <div><span>Cleared quantity</span><strong id="cleared-quantity">—</strong><small id="target-difference">—</small></div>
+              <div class="primary"><span>Clearing price</span><strong id="clearing-price">—</strong><small>paid per accredited MW-day</small></div>
+              <div><span>Gross annual payment</span><strong id="annual-payment">—</strong><small>simplified: quantity × price × 365</small></div>
+            </div>
+
+            <div class="chart-wrap">
+              <svg id="auction-chart" viewBox="0 0 900 510" role="img" aria-labelledby="chart-title chart-description">
+                <title id="chart-title">Capacity supply and demand curves</title>
+                <desc id="chart-description">An upward stair-step supply curve intersects a downward-sloping capacity demand curve.</desc>
+              </svg>
+            </div>
+
+            <div class="legend" aria-label="Chart legend"><span><i class="supply-key"></i>Supply offers</span><span><i class="demand-key"></i>VRR-style demand</span><span><i class="cleared-key"></i>Cleared supply</span></div>
+
+            <article class="outcome" id="outcome" aria-live="polite"></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="revenue" aria-labelledby="revenue-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Revenue stack</p><h2 id="revenue-title">Capacity is not energy</h2></div>
+          <p>Model one hypothetical resource as if its accredited quantity fully clears at the auction price above. Compare its capacity revenue with its annual energy-market margin.</p>
+        </div>
+        <div class="revenue-layout">
+          <div class="revenue-controls">
+            <label for="resource-nameplate"><span>Nameplate capacity <output id="resource-nameplate-output"></output></span><input id="resource-nameplate" type="range" min="50" max="1500" step="50" value="500" /></label>
+            <label for="resource-accreditation"><span>Accreditation <output id="resource-accreditation-output"></output></span><input id="resource-accreditation" type="range" min="10" max="100" step="5" value="80" /></label>
+            <label for="resource-energy"><span>Annual energy <output id="resource-energy-output"></output></span><input id="resource-energy" type="range" min="0" max="8000" step="100" value="1000" /></label>
+            <label for="energy-margin"><span>Energy margin <output id="energy-margin-output"></output></span><input id="energy-margin" type="range" min="0" max="80" step="1" value="10" /></label>
+          </div>
+          <div class="revenue-result">
+            <div class="revenue-total"><span>Modeled annual revenue</span><strong id="revenue-total">—</strong><small id="accredited-capacity">—</small></div>
+            <div class="stack-bar" aria-label="Share of modeled revenue"><div id="capacity-bar"></div><div id="energy-bar"></div></div>
+            <div class="stack-labels"><p><i class="capacity-dot"></i><span>Capacity</span><strong id="capacity-revenue">—</strong></p><p><i class="energy-dot"></i><span>Energy margin</span><strong id="energy-revenue">—</strong></p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="experiments" aria-labelledby="experiments-title">
+        <p class="eyebrow">Try these next</p>
+        <h2 id="experiments-title">Three experiments</h2>
+        <ol>
+          <li><strong>Find the cliff.</strong> Start at the base auction and raise the target one GW at a time. Note when a new supply block becomes marginal and reprices all cleared capacity.</li>
+          <li><strong>Retire cheap supply.</strong> Set existing coal to zero without changing demand. Compare the lost quantity with the change in gross annual payments.</li>
+          <li><strong>Separate nameplate from UCAP.</strong> Lower the hypothetical resource's accreditation while holding annual energy fixed. Which revenue stream changes?</li>
+        </ol>
+      </section>
+    </main>
+
+    <footer>This teaching auction omits PJM's full locational clearing, offer mitigation, price rules, qualification rules, and settlement adjustments.</footer>
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>

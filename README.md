@@ -201,6 +201,17 @@ Explain why installed capacity minus peak demand is a useful starting statistic 
 
 ### Unit 5 — Capacity markets
 
+[Read the Unit 5 pre-reading](docs/unit-05-capacity-markets.md)
+
+[Open the Unit 5 lab](apps/unit-05-capacity-market/index.html) using the local
+server, then visit `http://localhost:8000/apps/unit-05-capacity-market/`.
+
+Run its model checks with:
+
+```bash
+node --test tests/unit-05-capacity-market.test.mjs
+```
+
 **Learn**
 
 - Why some regions use capacity markets
