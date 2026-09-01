@@ -235,6 +235,17 @@ Explain what a capacity market buys and how a small change in quantity can somet
 
 ### Unit 6 — Reliability statistics and simulation
 
+[Read the Unit 6 pre-reading](docs/unit-06-reliability-statistics-and-simulation.md)
+
+[Open the Unit 6 lab](apps/unit-06-reliability-simulation/index.html) using the
+local server, then visit `http://localhost:8000/apps/unit-06-reliability-simulation/`.
+
+Run its model checks with:
+
+```bash
+node --test tests/unit-06-reliability-simulation.test.mjs
+```
+
 **Learn**
 
 - Forced outage rates and available capacity

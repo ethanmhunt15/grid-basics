@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Interactive Monte Carlo reliability lab for Grid Basics Unit 6." />
+    <title>Grid Basics · Reliability Simulation Lab</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./outcome-bars.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <a href="../../docs/unit-06-reliability-statistics-and-simulation.md">Grid Basics · Unit 6</a>
+      <p class="kicker">Probability laboratory</p>
+      <h1>One future is a story.<br />Thousands form a distribution.</h1>
+      <p>Start with two generators whose exact answer fits on paper. Then scale the idea into a chronological system where weather, outages, storage, and load interact.</p>
+    </header>
+
+    <main>
+      <section class="experiment coin-lab" aria-labelledby="coin-title">
+        <div class="section-heading">
+          <div><p class="kicker">Experiment 1</p><h2 id="coin-title">Learn Monte Carlo with two generators</h2></div>
+          <p>Each 60 MW unit independently succeeds or fails for one 100 MW hour. The analytical result is known, so we can check whether random trials converge to it.</p>
+        </div>
+
+        <div class="coin-controls">
+          <label for="unit-availability"><span>Availability per unit <output id="unit-availability-output"></output></span><input id="unit-availability" type="range" min="50" max="100" step="1" value="90" /></label>
+          <label for="coin-load"><span>Load <output id="coin-load-output"></output></span><input id="coin-load" type="range" min="40" max="140" step="5" value="100" /></label>
+          <label for="coin-seed"><span>Random seed</span><input id="coin-seed" type="number" min="1" step="1" value="2026" /></label>
+        </div>
+
+        <div id="state-space" class="state-space" aria-label="Analytical availability states"></div>
+
+        <div class="trial-console">
+          <div class="trial-actions" aria-label="Run outage trials">
+            <button type="button" data-add-trials="1">Run 1 trial</button>
+            <button type="button" data-add-trials="100">Add 100</button>
+            <button type="button" data-add-trials="10000">Add 10,000</button>
+            <button type="button" id="reset-trials" class="quiet">Reset</button>
+          </div>
+          <div class="trial-metrics" aria-live="polite">
+            <div><span>Trials</span><strong id="trial-count">0</strong><small>sample size</small></div>
+            <div><span>Sample LOLP</span><strong id="sample-lolp">—</strong><small id="analytical-lolp">analytical: —</small></div>
+            <div><span>Sample EUE</span><strong id="sample-eue">—</strong><small id="analytical-eue">analytical: —</small></div>
+          </div>
+        </div>
+
+        <div class="coin-chart-grid">
+          <div><h3>Does the sample settle down?</h3><svg id="coin-convergence" viewBox="0 0 720 320" role="img" aria-label="Sample loss of load probability converging toward its analytical value"></svg></div>
+          <div class="outcome-counts"><h3>Outcomes observed</h3><div id="outcome-counts"></div></div>
+        </div>
+      </section>
+
+      <section class="experiment system-lab" aria-labelledby="system-title">
+        <div class="section-heading">
+          <div><p class="kicker">Experiment 2</p><h2 id="system-title">Build a 30-day risk distribution</h2></div>
+          <p>Every trial preserves 720 hourly steps. Results are annualized only to practice the familiar units; this fictional fleet is not a PJM forecast.</p>
+        </div>
+
+        <div class="presets" aria-label="Reliability scenarios">
+          <button type="button" data-system-preset="base" aria-pressed="true">Base system</button>
+          <button type="button" data-system-preset="data-center">+10 GW data center</button>
+          <button type="button" data-system-preset="correlated">Correlated stress</button>
+          <button type="button" data-system-preset="flexible">Flexible load response</button>
+        </div>
+
+        <div class="system-layout">
+          <aside class="system-controls" aria-label="Reliability simulation assumptions">
+            <label for="peak-load"><span>Forecast peak <output id="peak-load-output"></output></span><input id="peak-load" type="range" min="100" max="150" step="1" /></label>
+            <label for="data-center-load"><span>Flat data-center load <output id="data-center-load-output"></output></span><input id="data-center-load" type="range" min="0" max="25" step="1" /></label>
+            <label for="forced-outage"><span>Thermal forced-outage rate <output id="forced-outage-output"></output></span><input id="forced-outage" type="range" min="1" max="15" step="1" /></label>
+            <label for="common-event"><span>Daily common-event chance <output id="common-event-output"></output></span><input id="common-event" type="range" min="0" max="10" step="0.2" /></label>
+            <label for="battery-duration"><span>10 GW battery duration <output id="battery-duration-output"></output></span><input id="battery-duration" type="range" min="0" max="12" step="1" /></label>
+            <label for="demand-response"><span>Demand response <output id="demand-response-output"></output></span><input id="demand-response" type="range" min="0" max="15" step="1" /></label>
+            <label for="system-trials"><span>Simulated 30-day periods <output id="system-trials-output"></output></span><input id="system-trials" type="range" min="100" max="5000" step="100" /></label>
+            <label for="system-seed"><span>Random seed</span><input id="system-seed" type="number" min="1" step="1" /></label>
+            <div class="run-actions"><button type="button" id="run-system">Run simulation</button><button type="button" id="new-seed" class="quiet">New seed</button></div>
+          </aside>
+
+          <div class="system-results">
+            <div id="stale-note" class="stale-note" hidden>Assumptions changed. Run the simulation to update results.</div>
+            <div class="metric-strip" aria-live="polite">
+              <div><span>LOLE</span><strong id="system-lole">—</strong><small>days/year · target reference 0.1</small></div>
+              <div><span>LOLH</span><strong id="system-lolh">—</strong><small>hours/year</small></div>
+              <div><span>EUE</span><strong id="system-eue">—</strong><small>GWh/year</small></div>
+            </div>
+            <p class="risk-summary" id="risk-summary"></p>
+
+            <div class="chart-grid">
+              <article><h3>LOLE convergence</h3><svg id="system-convergence" viewBox="0 0 590 330" role="img" aria-label="Estimated annual loss of load expectation as trials accumulate"></svg></article>
+              <article><h3>Annualized EUE across trials</h3><svg id="eue-histogram" viewBox="0 0 590 330" role="img" aria-label="Distribution of annualized expected unserved energy trial outcomes"></svg></article>
+            </div>
+
+            <article class="worst-day"><div><p class="kicker">Inspect the tail</p><h3 id="worst-day-title">Highest-EUE day in the worst trial</h3><p id="worst-day-description"></p></div><svg id="worst-day-chart" viewBox="0 0 900 320" role="img" aria-label="Load and available capability in the highest unserved energy day"></svg></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="challenges" aria-labelledby="challenges-title">
+        <p class="kicker">Try these next</p><h2 id="challenges-title">Experiments</h2>
+        <ol>
+          <li><strong>Watch a rare state arrive.</strong> Reset Experiment 1 and run one trial repeatedly. What happens to the estimates when “neither available” first appears?</li>
+          <li><strong>Change only the seed.</strong> Run 100 system trials with several seeds, then repeat at 5,000. Which result is more stable, and why?</li>
+          <li><strong>Compare frequency and depth.</strong> Add 10 GW of flat load, then add flexibility. Do LOLE and EUE improve by the same proportion?</li>
+        </ol>
+      </section>
+    </main>
+
+    <footer>The annualized system results are outputs of a fictional teaching model, not estimates of current or future PJM reliability.</footer>
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>

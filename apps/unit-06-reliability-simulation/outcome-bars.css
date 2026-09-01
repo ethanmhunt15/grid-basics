@@ -1,0 +1,22 @@
+#outcome-counts > div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 10px;
+  margin: 13px 0;
+}
+
+#outcome-counts > div > div {
+  display: block;
+  grid-column: 1 / 3;
+  height: 7px;
+  margin: 0;
+  border-radius: 5px;
+  background: #e8e7e1;
+}
+
+#outcome-counts > div > div i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--teal);
+}
