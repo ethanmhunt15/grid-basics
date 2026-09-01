@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Interactive deterministic resource-adequacy lab for Grid Basics Unit 4." />
+    <title>Grid Basics · Resource Adequacy Lab</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <a href="../../docs/unit-04-resource-adequacy.md">Grid Basics · Unit 4</a>
+      <h1>Same reserve margin.<br />Different shortage risk.</h1>
+      <p>Stress two 120 GW portfolios against the same chronological load and discover what a nameplate percentage leaves out.</p>
+    </header>
+
+    <main>
+      <section class="calculator" aria-labelledby="calculator-title">
+        <div><p class="kicker">Warm-up</p><h2 id="calculator-title">Reserve-margin arithmetic</h2></div>
+        <div class="calculator-controls">
+          <label for="calc-capacity"><span>Installed capacity <output id="calc-capacity-output"></output></span><input id="calc-capacity" type="range" min="80" max="220" step="1" value="120" /></label>
+          <label for="calc-peak"><span>Forecast peak <output id="calc-peak-output"></output></span><input id="calc-peak" type="range" min="60" max="180" step="1" value="100" /></label>
+        </div>
+        <div class="calculator-result"><strong id="calc-margin">—</strong><span>nameplate reserve margin</span><code id="calc-equation"></code></div>
+      </section>
+
+      <section class="lab" aria-labelledby="lab-title">
+        <div class="section-intro"><p class="kicker">Deterministic stress lab</p><h2 id="lab-title">Now look inside the 120 GW</h2><p>Both portfolios have the same nameplate total. Controls alter the realized load and the capability available across the day.</p></div>
+
+        <div class="presets" aria-label="Scenario presets">
+          <button type="button" data-preset="base" aria-pressed="true">Base day</button>
+          <button type="button" data-preset="forecast">Forecast miss</button>
+          <button type="button" data-preset="cold">Cold-event derate</button>
+          <button type="button" data-preset="data-center">+10 GW campus</button>
+        </div>
+
+        <div class="lab-layout">
+          <aside class="controls" aria-label="Adequacy assumptions">
+            <label for="forecast-peak"><span>Forecast peak <output id="forecast-peak-output"></output></span><input id="forecast-peak" type="range" min="70" max="130" step="1" /></label>
+            <label for="new-load"><span>Additional flat load <output id="new-load-output"></output></span><input id="new-load" type="range" min="0" max="25" step="1" /></label>
+            <label for="forecast-error"><span>Load forecast error <output id="forecast-error-output"></output></span><input id="forecast-error" type="range" min="-5" max="15" step="1" /></label>
+            <label for="thermal-unavailable"><span>Thermal unavailable in event <output id="thermal-unavailable-output"></output></span><input id="thermal-unavailable" type="range" min="0" max="40" step="1" /></label>
+            <label for="outage-start"><span>Event begins <output id="outage-start-output"></output></span><input id="outage-start" type="range" min="0" max="23" step="1" /></label>
+            <label for="outage-duration"><span>Event duration <output id="outage-duration-output"></output></span><input id="outage-duration" type="range" min="1" max="16" step="1" /></label>
+            <label for="solar-performance"><span>Solar performance <output id="solar-performance-output"></output></span><input id="solar-performance" type="range" min="0" max="120" step="5" /></label>
+            <label for="battery-duration"><span>Battery duration <output id="battery-duration-output"></output></span><input id="battery-duration" type="range" min="1" max="12" step="1" /></label>
+            <label for="battery-charge"><span>Starting battery charge <output id="battery-charge-output"></output></span><input id="battery-charge" type="range" min="0" max="100" step="5" /></label>
+            <label for="imports"><span>Firm imports <output id="imports-output"></output></span><input id="imports" type="range" min="0" max="20" step="1" /></label>
+          </aside>
+
+          <div class="workspace">
+            <div class="margin-strip">
+              <div><span>Both portfolios</span><strong>120 GW</strong><small>nameplate capacity</small></div>
+              <div><span>Headline margin</span><strong id="headline-margin">—</strong><small>against central forecast</small></div>
+              <div><span>Stressed margin</span><strong id="stressed-margin">—</strong><small>still ignores composition</small></div>
+            </div>
+
+            <div class="portfolio-grid">
+              <article class="portfolio" id="portfolio-a">
+                <header><div><p>Portfolio A</p><h3>100 thermal + 10 hydro + 10 demand response</h3></div><span id="a-status"></span></header>
+                <div class="portfolio-metrics"><div><span>Unserved energy</span><strong id="a-unserved">—</strong></div><div><span>Worst margin</span><strong id="a-margin">—</strong></div><div><span>Critical hour</span><strong id="a-hour">—</strong></div></div>
+                <svg id="chart-a" viewBox="0 0 560 300" role="img" aria-label="Portfolio A supply and demand"></svg>
+              </article>
+              <article class="portfolio" id="portfolio-b">
+                <header><div><p>Portfolio B</p><h3>50 thermal + 60 solar + 10 GW battery</h3></div><span id="b-status"></span></header>
+                <div class="portfolio-metrics"><div><span>Unserved energy</span><strong id="b-unserved">—</strong></div><div><span>Worst margin</span><strong id="b-margin">—</strong></div><div><span>Critical hour</span><strong id="b-hour">—</strong></div></div>
+                <svg id="chart-b" viewBox="0 0 560 300" role="img" aria-label="Portfolio B supply and demand"></svg>
+              </article>
+            </div>
+
+            <article class="critical-detail" aria-live="polite">
+              <div><p class="kicker">Selected hour</p><h3 id="selected-hour">—</h3></div>
+              <input id="hour-selector" type="range" min="0" max="23" step="1" value="19" aria-label="Selected hour" />
+              <div id="hour-comparison"></div>
+            </article>
+          </div>
+        </div>
+
+        <div class="challenges"><h3>Experiments</h3><ol><li>Keep the headline margin at 20%. Why does Portfolio B fail after sunset?</li><li>Increase battery duration, then starting charge. Which constraint binds first during this day?</li><li>Add the 10 GW campus and eliminate every shortage using imports. What assumption makes that solution fragile?</li></ol></div>
+      </section>
+    </main>
+    <footer>This deterministic teaching model does not assign probabilities. Passing one scenario is not proof of probabilistic adequacy.</footer>
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>

@@ -165,6 +165,17 @@ Given a fleet, offers, network constraint, and hourly demand, identify which pla
 
 ### Unit 4 — Resource adequacy
 
+[Read the Unit 4 pre-reading](docs/unit-04-resource-adequacy.md)
+
+[Open the Unit 4 lab](apps/unit-04-resource-adequacy/index.html) using the local
+server, then visit `http://localhost:8000/apps/unit-04-resource-adequacy/`.
+
+Run its model checks with:
+
+```bash
+node --test tests/unit-04-resource-adequacy.test.mjs
+```
+
 **Learn**
 
 - Operating reliability versus long-term resource adequacy
